@@ -9,7 +9,8 @@ import android.widget.TextView
 import com.daracul.android.notelin.models.Note
 
 class NotesAdapter(val context:Context) : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
-    var notesList:List<Note> = mutableListOf();
+    var notesList:List<Note> = listOf();
+    lateinit var onNoteClickListener : OnNoteClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_note, parent, false)
@@ -21,12 +22,17 @@ class NotesAdapter(val context:Context) : RecyclerView.Adapter<NotesAdapter.Note
     }
 
     override fun onBindViewHolder(viewHolder: NoteViewHolder, position: Int) {
-        viewHolder.bind(notesList.get(position))
+        viewHolder.bind(notesList.get(position),onNoteClickListener)
     }
 
     public fun swapData(data:List<Note>){
         this.notesList=data
         notifyDataSetChanged()
+    }
+
+
+    public interface OnNoteClickListener{
+        fun onNoteClick (note:Note)
     }
 
     inner class NoteViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -38,11 +44,12 @@ class NotesAdapter(val context:Context) : RecyclerView.Adapter<NotesAdapter.Note
             textTextView = itemView.findViewById(R.id.text_tv)
             dateTextView = itemView.findViewById(R.id.date_tv)
         }
-        fun bind(note: Note) {
+        fun bind(note: Note, onNoteClickListener: OnNoteClickListener) {
             titleTextView.setText(note.title)
             textTextView.setText(note.text)
-            dateTextView.setText(Utils.formatDate(note.createDate))
+            dateTextView.setText(Utils.formatDateTimeAgo(itemView.context, note.createDate))
+            itemView.setOnClickListener({val position = adapterPosition
+            if (position!=RecyclerView.NO_POSITION) onNoteClickListener.onNoteClick(note)})
         }
-
     }
 }

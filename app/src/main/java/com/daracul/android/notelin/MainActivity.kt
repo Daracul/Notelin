@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         recyclerView.layoutManager = viewManager
         recyclerView.adapter = viewAdapter
+        viewAdapter.onNoteClickListener = object: NotesAdapter.OnNoteClickListener{
+            override fun onNoteClick(note: Note) = showToast(note)
+        }
         subcribeToDataFromDb(db)
 
 
@@ -57,8 +60,8 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun showToast() {
-        Toast.makeText(this@MainActivity, "Not implemented yet", Toast.LENGTH_SHORT).show()
+    fun showToast(note: Note) {
+        Toast.makeText(this@MainActivity, "${note.title}", Toast.LENGTH_SHORT).show()
     }
 
     private fun addNote(db: AppDataBase) {
@@ -77,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({for (note in it){
-                    Log.d("myLogs","title: ${note.title} + text: ${note.text} + ${Utils.formatDate(note.createDate)}")
+                    Log.d("myLogs","title: ${note.title} + text: ${note.text} + ${Utils.formatDateTimeAgo(this,note.createDate)}")
                 }
                     Log.d("myLogs","____________________________________________________________________")
                 },
@@ -90,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({for (note in it){
-                    Log.d("myLogs","title: ${note.title} + text: ${note.text} + ${Utils.formatDate(note.createDate)}")
+                    Log.d("myLogs","title: ${note.title} + text: ${note.text} + ${Utils.formatDateTimeAgo(this,note.createDate)}")
                 }
                     Log.d("myLogs","____________________________________________________________________")
                     viewAdapter.swapData(it)
