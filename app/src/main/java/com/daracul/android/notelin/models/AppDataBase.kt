@@ -9,7 +9,7 @@ import android.content.Context
 abstract class AppDataBase : RoomDatabase(){
     abstract fun noteDao(): NoteDao
     companion object {
-        private val DATABASE_NAME = "note.db"
+        private val DATABASE_NAME = "note.Db"
 
         fun getAppDatabase (context : Context):AppDataBase {
             return Room.databaseBuilder(context.applicationContext,

@@ -47,7 +47,7 @@ class NotesAdapter(val context:Context) : RecyclerView.Adapter<NotesAdapter.Note
         fun bind(note: Note, onNoteClickListener: OnNoteClickListener) {
             titleTextView.setText(note.title)
             textTextView.setText(note.text)
-            dateTextView.setText(Utils.formatDateTimeAgo(itemView.context, note.createDate))
+            dateTextView.setText(Utils.formatDateTimeAgo(note.createDate))
             itemView.setOnClickListener({val position = adapterPosition
             if (position!=RecyclerView.NO_POSITION) onNoteClickListener.onNoteClick(note)})
         }

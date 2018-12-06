@@ -2,6 +2,7 @@ package com.daracul.android.notelin
 
 import android.content.Context
 import android.text.format.DateUtils
+import com.daracul.android.notelin.app.MyApp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -11,9 +12,9 @@ object Utils {
         return simpleDateFormat.format(date)
     }
 
-    fun formatDateTimeAgo (contet:Context, date: Date?):CharSequence{
+    fun formatDateTimeAgo (date: Date?):CharSequence{
         return DateUtils.getRelativeDateTimeString(
-                contet,
+                MyApp.context,
                 date!!.time,
                 DateUtils.HOUR_IN_MILLIS,
                 2*DateUtils.DAY_IN_MILLIS,

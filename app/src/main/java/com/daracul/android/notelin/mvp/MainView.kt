@@ -9,24 +9,8 @@ import com.daracul.android.notelin.models.Note
 interface MainView : MvpView {
     fun onNotesLoaded (notes:List<Note>)
 
-    fun updateView()
+    fun showError (throwable: Throwable?)
 
-    fun onSearchResult (notes: List<Note>)
-
-    fun onAllNotesDeleted()
-
-    fun onNoteDeleted()
-
-    fun showNoteInfoDialog (noteInfo : String)
-
-    fun hideNoteInfoDialog()
-
-    fun showNoteDeleteDialog(notePosition : Int)
-
-    fun hideNoteDeleteDialog()
-
-    fun showNoteContextDialog (notePosition: Int)
-
-    fun hideNoteContextDialog()
+    fun showMessage(text:String)
 
 }

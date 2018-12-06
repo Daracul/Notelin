@@ -5,6 +5,7 @@ import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.daracul.android.notelin.Utils
 import com.daracul.android.notelin.app.MyApp
+import com.daracul.android.notelin.db.Db
 import com.daracul.android.notelin.models.AppDataBase
 import com.daracul.android.notelin.models.Note
 import io.reactivex.Single
@@ -15,62 +16,67 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 @InjectViewState
-class MainPresenter: MvpPresenter<MainView>() {
-    private lateinit var db : AppDataBase
+class MainPresenter : MvpPresenter<MainView>() {
+    private lateinit var db: Db
     val compositeDisposable = CompositeDisposable();
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        db = AppDataBase.getAppDatabase(MyApp.context)
+        db = Db()
         subcribeToDataFromDb()
     }
 
     private fun subcribeToDataFromDb() {
-        val disposable = db.noteDao().getAllObservable()
+        val disposable = db.subcribeToDataFromDb()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({for (note in it){
-                    Log.d("myLogs","title: ${note.title} + text: ${note.text} + ${Utils.formatDateTimeAgo(MyApp.context,note.createDate)}")
-                }
-                    Log.d("myLogs","____________________________________________________________________")
-                    viewState.onNotesLoaded(it)
-                },
-                        { Log.d("myLogs","Sheet happens "+it.message)})
+                .subscribe({ Log.d("myLogs","SUBCRIPTION WORKS!");viewState.onNotesLoaded(it) },
+                        { error -> handle(error)})
         compositeDisposable.add(disposable)
     }
 
-     fun addNote() {
+    private fun handle(throwable: Throwable?) {
+        viewState.showError(throwable)
+    }
+
+    fun addNote() {
         val randomInt = Random().nextInt(50)
-        val note = Note("Title $randomInt","text$randomInt", Date(), Date())
-        val disposable = Single.fromCallable({db.noteDao().insertNote(note)})
+        val note = Note("Title $randomInt", "text$randomInt", Date(), Date())
+        val disposable = db.addNote(note)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally({Log.d("myLogs","Note $randomInt added")})
                 .subscribe()
         compositeDisposable.add(disposable)
     }
 
-     fun loadDataFromDb() {
-        val disposable = Single.fromCallable({db.noteDao().getAll()})
+    fun loadDataFromDb() {
+        val disposable = db.loadDataFromDb()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({for (note in it){
-                    Log.d("myLogs","title: ${note.title} + text: ${note.text} + ${Utils.formatDateTimeAgo(MyApp.context,note.createDate)}")
-                }
-                    Log.d("myLogs","____________________________________________________________________")
-                },
-                        {Log.d("myLogs","Sheet happens "+it.message)})
+                .subscribe({
+                    for (note in it) {
+                        Log.d("myLogs", "title: ${note.title} + text: ${note.text} + ${Utils.formatDateTimeAgo(note.createDate)}")
+                    }
+                    Log.d("myLogs", "____________________________________________________________________")
+                }, { handle(it) })
+        compositeDisposable.add(disposable)
+    }
+
+    fun updateDb(note:Note) {
+        val disposable = db.updateDb(note)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, { handle(it) })
         compositeDisposable.add(disposable)
     }
 
 
-
-     fun deleteAllFromDb() {
-        val disposable: Disposable = Single.fromCallable { db.noteDao().deleteAllNotes() }
+    fun deleteAllFromDb() {
+        val disposable: Disposable = db.deleteAllFromDb()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("myLogs", "All news deleted") },
-                        { throwable: Throwable? -> Log.d("myLogs", "suka ${throwable?.message}") })
+                .subscribe({ viewState.showMessage("All notes has been deleted") },
+                        { handle(it) })
         compositeDisposable.add(disposable)
     }
 
@@ -78,7 +84,6 @@ class MainPresenter: MvpPresenter<MainView>() {
         super.onDestroy()
         compositeDisposable.clear()
     }
-
 
 
 }

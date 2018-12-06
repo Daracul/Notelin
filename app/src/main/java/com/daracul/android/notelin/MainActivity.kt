@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -21,6 +22,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     @InjectPresenter
     lateinit var presenter: MainPresenter
     private lateinit var recyclerView: RecyclerView
+    lateinit var fab:FloatingActionButton
     private lateinit var viewAdapter: NotesAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
 
@@ -37,11 +39,12 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         viewAdapter.onNoteClickListener = object : NotesAdapter.OnNoteClickListener {
             override fun onNoteClick(note: Note) = showToast(note)
         }
+        fab.setOnClickListener { run { DetailActivity.start(this@MainActivity) } }
     }
 
     private fun setupUI() {
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-        val fab:FloatingActionButton = findViewById(R.id.fab_button)
+        fab = findViewById(R.id.fab_button)
         viewAdapter = NotesAdapter(this)
         viewManager = LinearLayoutManager(this)
         recyclerView.layoutManager = viewManager
@@ -63,7 +66,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     fun showToast(note: Note) {
-        Toast.makeText(this@MainActivity, "${note.title}", Toast.LENGTH_SHORT).show()
+        DetailActivity.start(this,note)
     }
 
 
@@ -72,43 +75,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         viewAdapter.swapData(notes)
     }
 
-    override fun updateView() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showError(throwable: Throwable?) {
+        Log.d("myLogs","${throwable?.javaClass?.simpleName} ${throwable?.message}")
     }
 
-    override fun onSearchResult(notes: List<Note>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onAllNotesDeleted() {
-
-    }
-
-    override fun onNoteDeleted() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun showNoteInfoDialog(noteInfo: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun hideNoteInfoDialog() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun showNoteDeleteDialog(notePosition: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun hideNoteDeleteDialog() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun showNoteContextDialog(notePosition: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun hideNoteContextDialog() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showMessage(text: String) {
+        Toast.makeText(this,text, Toast.LENGTH_SHORT).show()
     }
 }
