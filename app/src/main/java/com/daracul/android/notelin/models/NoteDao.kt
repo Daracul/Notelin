@@ -10,7 +10,7 @@ interface NoteDao {
     @Query("SELECT * FROM note")
     fun  getAll() : List<Note>
 
-    @Query("SELECT * FROM note")
+    @Query("SELECT * FROM note ORDER BY created_at DESC")
     fun  getAllObservable() : Flowable<List<Note>>
 
     @Query("SELECT * FROM note WHERE id = :id")
