@@ -1,4 +1,4 @@
-package com.daracul.android.notelin
+package com.daracul.android.notelin.screens.list
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.daracul.android.notelin.R
+import com.daracul.android.notelin.Utils
 import com.daracul.android.notelin.models.Note
 
 class NotesAdapter(val context:Context) : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {

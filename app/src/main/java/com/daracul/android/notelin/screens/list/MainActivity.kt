@@ -1,4 +1,4 @@
-package com.daracul.android.notelin
+package com.daracul.android.notelin.screens.list
 
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -10,12 +10,11 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
-import com.daracul.android.notelin.app.MyApp
-import com.daracul.android.notelin.models.AppDataBase
+import com.daracul.android.notelin.R
 import com.daracul.android.notelin.models.Note
-import com.daracul.android.notelin.mvp.MainPresenter
-import com.daracul.android.notelin.mvp.MainView
-import java.util.*
+import com.daracul.android.notelin.screens.detail.DetailActivity
+import com.daracul.android.notelin.screens.list.mvp.MainPresenter
+import com.daracul.android.notelin.screens.list.mvp.MainView
 
 class MainActivity : MvpAppCompatActivity(), MainView {
 
@@ -37,7 +36,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     fun setupUX() {
         viewAdapter.onNoteClickListener = object : NotesAdapter.OnNoteClickListener {
-            override fun onNoteClick(note: Note) = showToast(note)
+            override fun onNoteClick(note: Note) = DetailActivity.start(this@MainActivity,note)
         }
         fab.setOnClickListener { run { DetailActivity.start(this@MainActivity) } }
     }
@@ -64,11 +63,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         }
         return super.onOptionsItemSelected(item)
     }
-
-    fun showToast(note: Note) {
-        DetailActivity.start(this,note)
-    }
-
 
 
     override fun onNotesLoaded(notes: List<Note>) {

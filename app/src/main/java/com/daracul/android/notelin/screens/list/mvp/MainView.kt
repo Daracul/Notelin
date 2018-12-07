@@ -1,4 +1,4 @@
-package com.daracul.android.notelin.mvp
+package com.daracul.android.notelin.screens.list.mvp
 
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy

@@ -1,14 +1,13 @@
-package com.daracul.android.notelin.mvp
+package com.daracul.android.notelin.screens.list.mvp
 
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.daracul.android.notelin.Utils
-import com.daracul.android.notelin.app.MyApp
 import com.daracul.android.notelin.db.Db
-import com.daracul.android.notelin.models.AppDataBase
 import com.daracul.android.notelin.models.Note
-import io.reactivex.Single
+import com.daracul.android.notelin.screens.detail.DetailActivity
+import com.daracul.android.notelin.screens.list.MainActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -48,6 +47,7 @@ class MainPresenter : MvpPresenter<MainView>() {
                 .subscribe()
         compositeDisposable.add(disposable)
     }
+
 
     fun loadDataFromDb() {
         val disposable = db.loadDataFromDb()
