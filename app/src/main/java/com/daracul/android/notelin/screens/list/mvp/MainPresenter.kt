@@ -53,12 +53,7 @@ class MainPresenter : MvpPresenter<MainView>() {
         val disposable = db.loadDataFromDb()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    for (note in it) {
-                        Log.d("myLogs", "title: ${note.title} + text: ${note.text} + ${Utils.formatDateTimeAgo(note.createDate)}")
-                    }
-                    Log.d("myLogs", "____________________________________________________________________")
-                }, { handle(it) })
+                .subscribe({viewState.onNotesLoaded(it)}, { handle(it) })
         compositeDisposable.add(disposable)
     }
 

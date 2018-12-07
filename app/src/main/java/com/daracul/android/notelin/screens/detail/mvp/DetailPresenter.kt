@@ -31,7 +31,7 @@ class DetailPresenter (var isNewNote: Boolean = false): MvpPresenter<DetailView>
     fun setNote(note: Note) {
         this.note = note;
     }
-    
+
     private fun updateDatabase() {
         Log.d("myLogs","Updating db ... \n${note.title}")
         val disposable = db.updateDb(note)

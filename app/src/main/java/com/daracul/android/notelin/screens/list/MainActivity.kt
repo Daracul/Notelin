@@ -31,8 +31,13 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         setContentView(R.layout.activity_main)
         setupUI()
         setupUX()
-
     }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.loadDataFromDb()
+    }
+
 
     fun setupUX() {
         viewAdapter.onNoteClickListener = object : NotesAdapter.OnNoteClickListener {

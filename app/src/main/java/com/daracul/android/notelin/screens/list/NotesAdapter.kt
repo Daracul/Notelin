@@ -11,7 +11,7 @@ import com.daracul.android.notelin.Utils
 import com.daracul.android.notelin.models.Note
 
 class NotesAdapter(val context:Context) : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
-    var notesList:List<Note> = listOf();
+    var notesList:List<Note> = mutableListOf()
     lateinit var onNoteClickListener : OnNoteClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -27,13 +27,13 @@ class NotesAdapter(val context:Context) : RecyclerView.Adapter<NotesAdapter.Note
         viewHolder.bind(notesList.get(position),onNoteClickListener)
     }
 
-    public fun swapData(data:List<Note>){
+    fun swapData(data:List<Note>){
         this.notesList=data
         notifyDataSetChanged()
     }
 
 
-    public interface OnNoteClickListener{
+    interface OnNoteClickListener{
         fun onNoteClick (note:Note)
     }
 
