@@ -10,8 +10,10 @@
         android:title="Delete All"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_show_log"
-        android:title="Show log"
-        app:showAsAction="never" />
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
 
 </menu>

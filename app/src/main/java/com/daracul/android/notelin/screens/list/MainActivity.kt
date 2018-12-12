@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -35,7 +36,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun onResume() {
         super.onResume()
-        presenter.loadDataFromDb()
+        presenter.subcribeToDataFromDb()
     }
 
 
@@ -57,14 +58,32 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_item,menu)
+        initSearchView(menu)
         return true
+    }
+
+    private fun initSearchView(menu: Menu?) {
+        val searchViewMenuItem = menu?.findItem(R.id.action_search)
+        val searchView = searchViewMenuItem?.actionView as SearchView
+        searchView.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return  false
+            }
+            override fun onQueryTextChange(query: String?): Boolean {
+                presenter.search(query)
+                return true
+            }
+        })
+        searchView.setOnCloseListener { presenter.search("");
+            false }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
             R.id.action_add -> presenter.addNote()
             R.id.action_delete -> presenter.deleteAllFromDb()
-            R.id.action_show_log -> presenter.loadDataFromDb()
+//            R.id.action_show_log -> presenter.loadDataFromDb()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -81,4 +100,5 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     override fun showMessage(text: String) {
         Toast.makeText(this,text, Toast.LENGTH_SHORT).show()
     }
+    
 }

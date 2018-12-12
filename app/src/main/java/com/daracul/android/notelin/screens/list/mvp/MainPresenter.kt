@@ -17,21 +17,27 @@ import java.util.*
 @InjectViewState
 class MainPresenter : MvpPresenter<MainView>() {
     private lateinit var db: Db
+    private var notesList = mutableListOf<Note>() ;
     val compositeDisposable = CompositeDisposable();
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         db = Db()
-        subcribeToDataFromDb()
     }
 
-    private fun subcribeToDataFromDb() {
+    fun subcribeToDataFromDb() {
         val disposable = db.subcribeToDataFromDb()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("myLogs","SUBCRIPTION WORKS!");viewState.onNotesLoaded(it) },
+                .subscribe({ handleResult(it) },
                         { error -> handle(error)})
         compositeDisposable.add(disposable)
+    }
+
+    fun handleResult(it: List<Note>) {
+        notesList.clear()
+        notesList.addAll(it)
+        viewState.onNotesLoaded(notesList)
     }
 
     private fun handle(throwable: Throwable?) {
@@ -73,6 +79,15 @@ class MainPresenter : MvpPresenter<MainView>() {
                 .subscribe({ viewState.showMessage("All notes has been deleted") },
                         { handle(it) })
         compositeDisposable.add(disposable)
+    }
+
+    fun search(query:String?){
+        if (query.equals("")){
+            viewState.onNotesLoaded(notesList)
+        } else{
+            val searchResult = notesList.filter { it.title!!.startsWith(query!!, ignoreCase = true) }
+            viewState.onNotesLoaded(searchResult)
+        }
     }
 
     override fun onDestroy() {

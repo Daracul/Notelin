@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 @InjectViewState
-class DetailPresenter (var isNewNote: Boolean = false): MvpPresenter<DetailView>() {
+class DetailPresenter(var isNewNote: Boolean = false) : MvpPresenter<DetailView>() {
     private lateinit var note: Note
     private lateinit var db: Db
     private val compositeDisposable = CompositeDisposable()
@@ -19,13 +19,13 @@ class DetailPresenter (var isNewNote: Boolean = false): MvpPresenter<DetailView>
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         db = Db()
-        var titleText:String = "Create note"
-        if (!isNewNote){
+        var titleText: String = "Create note"
+        if (!isNewNote) {
             viewState.setData(note)
             titleText = "Edit note"
         }
         viewState.setActionBar(titleText)
-        Log.d("myLogs","Is it new note?  $isNewNote")
+        Log.d("myLogs", "Is it new note?  $isNewNote")
     }
 
     fun setNote(note: Note) {
@@ -33,11 +33,14 @@ class DetailPresenter (var isNewNote: Boolean = false): MvpPresenter<DetailView>
     }
 
     private fun updateDatabase() {
-        Log.d("myLogs","Updating db ... \n${note.title}")
+        Log.d("myLogs", "Updating db ... \n${note.title}")
         val disposable = db.updateDb(note)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ viewState.showToast("Note updates") }, { })
+                .subscribe({
+                    viewState.showToast("Note updates")
+                    viewState.finishActivity()
+                }, { })
         compositeDisposable.add(disposable)
     }
 
@@ -45,17 +48,20 @@ class DetailPresenter (var isNewNote: Boolean = false): MvpPresenter<DetailView>
         val disposable = db.addNote(note)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ viewState.showToast("Note created") }, { })
+                .subscribe({
+                    viewState.showToast("Note created")
+                    viewState.finishActivity()
+                }, { })
         compositeDisposable.add(disposable)
     }
 
-    fun doDbChanges(title:String,text:String){
+    fun doDbChanges(title: String, text: String) {
         if (isNewNote) {
-            note = Note(title,text, Date(), Date())
+            note = Note(title, text, Date(), Date())
             addToDatabase()
         } else {
-            note.title=title
-            note.text=text
+            note.title = title
+            note.text = text
             updateDatabase()
         }
     }
